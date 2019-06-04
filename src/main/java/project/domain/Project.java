@@ -37,9 +37,11 @@ public class Project {
 	private Date endDate;
 
 	@JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
+	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime createdAt;
 
 	@JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
+	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime updatedAt;
 
 	@PrePersist
