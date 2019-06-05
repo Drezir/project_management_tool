@@ -1,6 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {createProject} from '../../actions/projectActions';
 
-export default class AddProject extends Component {
+class AddProject extends Component {
 
     constructor(props) {
         super(props);
@@ -10,11 +13,21 @@ export default class AddProject extends Component {
             projectIdentifier: "",
             description: "",
             startDate: "",
-            endDate: ""
+            endDate: "",
+
+            errors: {}
         };
 
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+            this.setState({
+                errors: nextProps.errors
+            })
+        }
     }
 
     onChange(e) {
@@ -30,9 +43,11 @@ export default class AddProject extends Component {
             startDate: this.state.startDate,
             endDate: this.state.endDate
         };
+        this.props.createProject(newProject, this.props.history);
     }
 
     render() { 
+        const {errors} = this.state;
         return (
             <div className="project">
         <div className="container">
@@ -56,7 +71,6 @@ export default class AddProject extends Component {
                             type="text" 
                             className="form-control form-control-lg" 
                             placeholder="Unique Project ID"
-                            disabled
                             value={this.state.projectIdentifier}
                             onChange={this.onChange}/>
                         </div>
@@ -97,3 +111,17 @@ export default class AddProject extends Component {
         )
     }
 }
+
+AddProject.propTypes = {
+    createProject: PropTypes.func.isRequired,
+    errors: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    errors: state.errors
+});
+
+export default connect(
+    mapStateToProps, 
+    {createProject}
+) (AddProject);
