@@ -25,7 +25,7 @@ public class ProjectController {
     @PostMapping(path = "")
     public ResponseEntity<?> createProject(@Valid @RequestBody Project project, BindingResult bindingResult) {
 
-        Optional<Map<String, String>> errorMap = mapValidationErrorService.formatBindingResult(bindingResult);
+        Optional<Map<String, String>> errorMap = mapValidationErrorService. formatBindingResult(bindingResult);
         if (errorMap.isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap.get());
         }
