@@ -10,21 +10,23 @@ import java.util.Map;
 @Getter
 public class ExceptionResponse {
 
-    private Map<String, String> errorItems;
+    private Map<String, Object> errorItems;
     private String stacktrace;
 
     public ExceptionResponse(Exception ex) {
         errorItems = new HashMap<>();
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        ex.printStackTrace(printWriter);
-        printWriter.flush();
-        stacktrace = stringWriter.toString();
+        if (ex != null) {
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            ex.printStackTrace(printWriter);
+            printWriter.flush();
+            stacktrace = stringWriter.toString();
+        }
     }
 
-    public ExceptionResponse with(String value, String message) {
-        errorItems.put(value, message);
+    public ExceptionResponse addValidationError(String key, Object value) {
+        errorItems.put(key, value);
         return this;
     }
 

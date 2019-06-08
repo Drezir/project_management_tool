@@ -2,8 +2,10 @@ package project.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import project.domain.Backlog;
 import project.domain.Project;
-import project.exceptions.ProjectIdException;
+import project.exceptions.ServerException;
+import project.repositories.BacklogRepository;
 import project.repositories.ProjectRepository;
 
 @Service
@@ -11,20 +13,30 @@ import project.repositories.ProjectRepository;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final BacklogRepository backlogRepository;
 
     public Project saveOrUpdate(Project project) {
+        project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+        if (project.getId() == null) {
+            project.setBacklog(new Backlog());
+            project.getBacklog().setProject(project);
+            project.getBacklog().setProjectIdentifier(project.getProjectIdentifier());
+        } else {
+            project.setBacklog(backlogRepository.findByProjectIdentifier(project.getProjectIdentifier()));
+        }
+
         try {
-            project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
             return projectRepository.save(project);
         } catch (Exception ex) {
-            throw new ProjectIdException("Project ID already exists", project.getProjectIdentifier());
+            throw new ServerException("Cannot save or update project", ex);
         }
     }
 
     public Project findByProjectIdentifier(String projectIdentifier) {
         Project project = projectRepository.findByProjectIdentifier(projectIdentifier.toUpperCase());
         if (project == null) {
-            throw new ProjectIdException("Project ID does not exist", projectIdentifier);
+            throw new ServerException("Cannot find project", null)
+                    .awareObject("Project ID does not exist", projectIdentifier);
         }
         return project;
     }

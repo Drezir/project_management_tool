@@ -18,6 +18,7 @@
 		<java.version>1.8</java.version>
 		<jjwt.version>0.9.1</jjwt.version>
 		<lombok.version>1.18.8</lombok.version>
+		<commons-beanutils.version>1.7.0</commons-beanutils.version>
 	</properties>
 
 	<parent>
@@ -72,7 +73,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.8</version>
+		</dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils.version}</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

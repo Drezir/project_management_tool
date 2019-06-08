@@ -1,12 +1,12 @@
 package project.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -42,6 +42,11 @@ public class Project {
 
 	@JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
 	private LocalDateTime updatedAt;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "backlog_id")
+	@JsonManagedReference
+	private Backlog backlog;
 
 	@PrePersist
 	protected void onCreate() {
