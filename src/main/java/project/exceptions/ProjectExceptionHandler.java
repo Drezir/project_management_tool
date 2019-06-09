@@ -24,7 +24,7 @@ public class ProjectExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {ServerException.class})
     public final ResponseEntity<?> handleServerException(ServerException ex, WebRequest webRequest) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(ex);
-        ex.getAwareObjects().forEach(exceptionResponse::addValidationError);
+        ex.getServerErrors().forEach(exceptionResponse::addValidationError);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
     }
 

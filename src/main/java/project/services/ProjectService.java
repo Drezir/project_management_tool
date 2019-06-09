@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.domain.Backlog;
 import project.domain.Project;
+import project.exceptions.ServerError;
 import project.exceptions.ServerException;
 import project.repositories.BacklogRepository;
 import project.repositories.ProjectRepository;
@@ -36,7 +37,7 @@ public class ProjectService {
         Project project = projectRepository.findByProjectIdentifier(projectIdentifier.toUpperCase());
         if (project == null) {
             throw new ServerException("Cannot find project", null)
-                    .awareObject("Project ID does not exist", projectIdentifier);
+                    .withError(ServerError.PROJECT_DOES_NOT_EXIST, "projectIdentifier", projectIdentifier);
         }
         return project;
     }

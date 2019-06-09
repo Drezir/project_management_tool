@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {getProject, createProject} from '../../actions/projectActions';
 import classnames from 'classnames';
+import ErrorPage from '../ErrorPage';
 
 class UpdateProject extends Component {
 
@@ -75,6 +76,9 @@ class UpdateProject extends Component {
 
     render() { 
         const {errors} = this.state;
+        if (errors.errorItems) {
+            return <ErrorPage errors={errors}/>
+        }
         return (
             <div className="project">
         <div className="container">

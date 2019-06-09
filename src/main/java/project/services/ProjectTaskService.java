@@ -6,6 +6,7 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.stereotype.Service;
 import project.domain.Backlog;
 import project.domain.ProjectTask;
+import project.exceptions.ServerError;
 import project.exceptions.ServerException;
 import project.repositories.BacklogRepository;
 import project.repositories.ProjectTaskRepository;
@@ -25,7 +26,7 @@ public class ProjectTaskService {
         Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
         if (backlog == null) {
             throw new ServerException("Cannot save or update project", null)
-                    .awareObject("Project identifier does not exist", projectIdentifier);
+                    .withError(ServerError.PROJECT_DOES_NOT_EXIST,"projectIdentifier", projectIdentifier);
         }
         Integer sequence = backlog.getPTSequence();
         projectTask.setBacklog(backlog);
@@ -41,22 +42,26 @@ public class ProjectTaskService {
         return projectTaskRepository.save(projectTask);
     }
 
-    private ProjectTask findProjectTak(String projectIdentifier, String taskSequence) {
+    private Backlog checkBacklogExistence(String projectIdentifier) {
         Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
         if (backlog == null) {
             throw new ServerException("Cannot save or update project", null)
-                    .awareObject("Project identifier does not exist", projectIdentifier);
+                    .withError(ServerError.PROJECT_DOES_NOT_EXIST, "projectIdentifier", projectIdentifier);
         }
-
+        return backlog;
+    }
+    private ProjectTask findProjectTak(String projectIdentifier, String taskSequence) {
+        checkBacklogExistence(projectIdentifier);
         ProjectTask projectTask = projectTaskRepository.findByProjectSequence(taskSequence);
         if (projectTask == null) {
             throw new ServerException("Cannot save or update project", null)
-                    .awareObject("Project sequence does not exist", taskSequence);
+                    .withError(ServerError.PROJECT_DOES_NOT_EXIST, "projectIdentifier", projectIdentifier);
         }
         if (!projectTask.getProjectIdentifier().equals(projectIdentifier)) {
             throw new ServerException("Cannot save or update project", null)
-                    .awareObject("Project task does not belong to project.", projectIdentifier)
-                    .awareObject("Project does not contain given project task", projectTask.getProjectIdentifier());
+                    .withError(ServerError.PROJECT_DOES_NOT_CONTAIN_TASK, "projectIdentifier", projectIdentifier)
+                    .withError(ServerError.TASK_DOES_NOT_BELONG_TO_PROJECT, "projectTask.projectIdentifier",
+                            projectTask.getProjectIdentifier());
         }
         return projectTask;
     }
@@ -66,6 +71,7 @@ public class ProjectTaskService {
     }
 
     public Collection<ProjectTask> findBacklogByProjectIdentifier(String projectIdentifier) {
+        checkBacklogExistence(projectIdentifier);
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(projectIdentifier);
     }
 
@@ -79,8 +85,7 @@ public class ProjectTaskService {
         } catch (Exception ex) {
             log.error("Error copying properties using beanutils", ex);
             throw new ServerException("Error copying properties using beanutils", ex)
-                    .awareObject("New project task", projectSequence)
-                    .awareObject("Project task to update", target);
+                    .withError(ServerError.PROJECT_CANNOT_PERSIST, "newProjectTask", projectTask);
         }
     }
 

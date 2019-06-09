@@ -3,6 +3,8 @@ package project.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -11,6 +13,8 @@ import java.util.HashSet;
 @Entity
 @Data
 @Table(name = "backlogs")
+@EqualsAndHashCode(exclude = {"projectTasks", "project"})
+@ToString(exclude = {"projectTasks", "project"})
 public class Backlog {
 
     @Id

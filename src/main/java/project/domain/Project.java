@@ -3,6 +3,8 @@ package project.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.util.Date;
 @Entity
 @Data
 @Table(name = "projects")
+@EqualsAndHashCode(exclude = {"backlog"})
+@ToString(exclude = {"backlog"})
 public class Project {
 
 	@Id
@@ -43,7 +47,7 @@ public class Project {
 	@JsonFormat(pattern = "yyyy-mm-dd HH:mm:ss")
 	private LocalDateTime updatedAt;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	@JoinColumn(name = "backlog_id")
 	@JsonManagedReference
 	private Backlog backlog;

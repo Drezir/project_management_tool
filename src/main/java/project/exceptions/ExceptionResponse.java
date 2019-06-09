@@ -25,8 +25,8 @@ public class ExceptionResponse {
         }
     }
 
-    public ExceptionResponse addValidationError(String key, Object value) {
-        errorItems.put(key, value);
+    public ExceptionResponse addValidationError(ServerError key, ServerException.ServerExceptionObject value) {
+        errorItems.put(key.getResponseErrorKey(), value);
         return this;
     }
 

@@ -63,3 +63,8 @@ img {
 .form-control::placeholder {
   color: #bbb !important;
 }
+
+.stacktrace {
+  height: 50vh;
+  overflow: auto;
+}
