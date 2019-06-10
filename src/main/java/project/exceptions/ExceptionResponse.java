@@ -1,11 +1,12 @@
 package project.exceptions;
 
-import lombok.Getter;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import lombok.Getter;
+import project.exceptions.ServerException.ServerExceptionObject;
 
 @Getter
 public class ExceptionResponse {
@@ -25,7 +26,7 @@ public class ExceptionResponse {
         }
     }
 
-    public ExceptionResponse addValidationError(ServerError key, ServerException.ServerExceptionObject value) {
+    public ExceptionResponse addValidationError(ServerError key, Set<ServerExceptionObject> value) {
         errorItems.put(key.getResponseErrorKey(), value);
         return this;
     }

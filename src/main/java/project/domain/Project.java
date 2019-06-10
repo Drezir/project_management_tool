@@ -1,16 +1,28 @@
 package project.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.time.LocalDateTime;
+import java.util.Date;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Data
@@ -51,6 +63,12 @@ public class Project {
 	@JoinColumn(name = "backlog_id")
 	@JsonManagedReference
 	private Backlog backlog;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
+	private User user;
+
+	private String projectLeader;
 
 	@PrePersist
 	protected void onCreate() {

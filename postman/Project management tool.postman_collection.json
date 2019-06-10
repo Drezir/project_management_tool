@@ -290,8 +290,81 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Register user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"password\",\n    \"confirmPassword\": \"password\",\n    \"fullName\": \"Adam Ostrožlík\",\n    \"username\": \"adamostrozlik@email.com\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/users/register",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"adamostrozlik@email.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{server}}/api/users/login",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{currentAccessToken}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -299,7 +372,30 @@
 				"id": "cf0195aa-49b3-4568-9168-66f59985dfbe",
 				"type": "text/javascript",
 				"exec": [
-					""
+					"const url = pm.variables.get(\"server\") + '/api/users/login';",
+					"const echoPostRequest = {",
+					"  url: url,",
+					"  method: 'POST',",
+					"  header: 'Content-Type:application/json',",
+					"  body: {",
+					"    mode: 'application/json',",
+					"    raw: JSON.stringify(",
+					"        {",
+					"        \tusername:'adamostrozlik@email.com',",
+					"        \tpassword:'password'",
+					"        })",
+					"  }",
+					"};",
+					"",
+					"pm.sendRequest(echoPostRequest, function (err, res) {",
+					"console.log(err ? err : res.json());",
+					"    if (err === null) {",
+					"        console.log('Saving the token and expiry date')",
+					"        var responseJson = res.json();",
+					"        let token = responseJson.token.substring(7);",
+					"        pm.environment.set('currentAccessToken', token)",
+					"    }",
+					"});"
 				]
 			}
 		},
@@ -316,9 +412,15 @@
 	],
 	"variable": [
 		{
-			"id": "d82face3-863a-4871-8548-f7332ddfb975",
+			"id": "4ed83edf-0c86-456d-a623-3f0c5ea076eb",
 			"key": "server",
 			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"id": "319ccb0f-15c3-4bf1-a3a6-fde8a9152392",
+			"key": "currentAccessToken",
+			"value": "",
 			"type": "string"
 		}
 	]

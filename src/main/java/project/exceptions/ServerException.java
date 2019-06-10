@@ -1,18 +1,19 @@
 package project.exceptions;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ServerException extends RuntimeException {
 
     @Getter
-    private Map<ServerError, ServerExceptionObject> serverErrors;
+    private Map<ServerError, Set<ServerExceptionObject>> serverErrors;
 
     public ServerException(String reason, Throwable throwable) {
         super(reason, throwable);
@@ -20,7 +21,10 @@ public class ServerException extends RuntimeException {
     }
 
     public ServerException withError(ServerError serverError, String attribute, Object value) {
-        serverErrors.put(serverError, new ServerExceptionObject(serverError.getMessage(), attribute, value));
+        if (!serverErrors.containsKey(serverError)) {
+            serverErrors.put(serverError, new HashSet<>());
+        }
+        serverErrors.get(serverError).add(new ServerExceptionObject(serverError.getMessage(), attribute, value));
         return this;
     }
 

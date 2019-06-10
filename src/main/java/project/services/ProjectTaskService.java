@@ -1,5 +1,6 @@
 package project.services;
 
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -8,11 +9,8 @@ import project.domain.Backlog;
 import project.domain.ProjectTask;
 import project.exceptions.ServerError;
 import project.exceptions.ServerException;
-import project.repositories.BacklogRepository;
 import project.repositories.ProjectTaskRepository;
 import project.utils.NullAwareBeanUtilsBean;
-
-import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -20,14 +18,10 @@ import java.util.Collection;
 public class ProjectTaskService {
 
     private final ProjectTaskRepository projectTaskRepository;
-    private final BacklogRepository backlogRepository;
+    private final ProjectService projectService;
 
-    public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
-        Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
-        if (backlog == null) {
-            throw new ServerException("Cannot save or update project", null)
-                    .withError(ServerError.PROJECT_DOES_NOT_EXIST,"projectIdentifier", projectIdentifier);
-        }
+    public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask, String username) {
+        Backlog backlog = projectService.findByProjectIdentifier(projectIdentifier, username).getBacklog();
         Integer sequence = backlog.getPTSequence();
         projectTask.setBacklog(backlog);
         projectTask.setProjectSequence(projectIdentifier + "-" +  sequence);
@@ -42,16 +36,11 @@ public class ProjectTaskService {
         return projectTaskRepository.save(projectTask);
     }
 
-    private Backlog checkBacklogExistence(String projectIdentifier) {
-        Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
-        if (backlog == null) {
-            throw new ServerException("Cannot save or update project", null)
-                    .withError(ServerError.PROJECT_DOES_NOT_EXIST, "projectIdentifier", projectIdentifier);
-        }
-        return backlog;
+    private Backlog checkBacklogExistence(String projectIdentifier, String username) {
+        return projectService.findByProjectIdentifier(projectIdentifier, username).getBacklog();
     }
-    private ProjectTask findProjectTak(String projectIdentifier, String taskSequence) {
-        checkBacklogExistence(projectIdentifier);
+    private ProjectTask findProjectTask(String projectIdentifier, String taskSequence, String username) {
+        checkBacklogExistence(projectIdentifier, username);
         ProjectTask projectTask = projectTaskRepository.findByProjectSequence(taskSequence);
         if (projectTask == null) {
             throw new ServerException("Cannot save or update project", null)
@@ -66,18 +55,18 @@ public class ProjectTaskService {
         return projectTask;
     }
 
-    public ProjectTask findProjectBySequence(String projectIdentifier, String taskSequence) {
-        return findProjectTak(projectIdentifier, taskSequence);
+    public ProjectTask findProjectBySequence(String projectIdentifier, String taskSequence, String username) {
+        return findProjectTask(projectIdentifier, taskSequence, username);
     }
 
-    public Collection<ProjectTask> findBacklogByProjectIdentifier(String projectIdentifier) {
-        checkBacklogExistence(projectIdentifier);
+    public Collection<ProjectTask> findBacklogByProjectIdentifier(String projectIdentifier, String username) {
+        checkBacklogExistence(projectIdentifier, username);
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(projectIdentifier);
     }
 
-    public ProjectTask updateByProjectSequence(ProjectTask projectTask, String projectIdentifier, String projectSequence) {
+    public ProjectTask updateByProjectSequence(ProjectTask projectTask, String projectIdentifier, String projectSequence, String username) {
 
-        ProjectTask target = findProjectTak(projectIdentifier, projectSequence);
+        ProjectTask target = findProjectTask(projectIdentifier, projectSequence, username);
         BeanUtilsBean ignoreNull = new NullAwareBeanUtilsBean();
         try {
             ignoreNull.copyProperties(target, projectTask);
@@ -89,8 +78,8 @@ public class ProjectTaskService {
         }
     }
 
-    public void deleteProjectTask(String projectIdentifier, String taskSequence) {
-        ProjectTask projectTask = findProjectTak(projectIdentifier, taskSequence);
+    public void deleteProjectTask(String projectIdentifier, String taskSequence, String username) {
+        ProjectTask projectTask = findProjectTask(projectIdentifier, taskSequence, username);
         projectTaskRepository.delete(projectTask);
     }
 }
