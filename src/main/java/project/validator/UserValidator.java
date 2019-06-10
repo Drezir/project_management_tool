@@ -1,11 +1,14 @@
 package project.validator;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import project.domain.User;
 
 @Component
+@RequiredArgsConstructor
 public class UserValidator implements Validator {
 
   @Override
@@ -23,11 +26,11 @@ public class UserValidator implements Validator {
     if (userPassword != null && userPassword.length() < 6) {
       errors.rejectValue("password", "Length", "Password should be at least 6 characters long");
     }
-    if (userPassword != null && userConfirmPassword != null) {
+    if (StringUtils.hasText(userPassword) && StringUtils.hasText(userConfirmPassword)) {
       if (! userPassword.equals(userConfirmPassword)) {
         errors.rejectValue("confirmPassword", "Match", "Passwords must match");
       }
-    } else if (userConfirmPassword == null) {
+    } else if (!StringUtils.hasText(userConfirmPassword)) {
       errors.rejectValue("confirmPassword", "Match", "Passwords must match");
     }
   }
