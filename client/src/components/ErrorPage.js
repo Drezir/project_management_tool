@@ -12,9 +12,9 @@ export default class ErrorPage extends Component {
                             const error = errorItems[key];
                             return (
                                 <li>
-                                    {error.message}
+                                    {key}
                                     <ul>
-                                        <li>{error.attribute} = {error.value}</li>
+                                        <li>{error}</li>
                                     </ul>
                                 </li>
                             );
