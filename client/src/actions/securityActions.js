@@ -19,7 +19,7 @@ export const createNewUser = (newUser, history) => async dispatch => {
     }
 };
 
-export const login = LoginRequest => async dispatch => {
+export const login = (LoginRequest, history) => async dispatch => {
     try {
         const response = await axios.post("/api/users/login", LoginRequest);
         // extract token

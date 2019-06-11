@@ -36,6 +36,9 @@ class Login extends Component {
         this.props.login(loginRequest);
     }
     componentWillReceiveProps(nextProps) {
+        if (nextProps.security && nextProps.security.validToken) {
+            this.props.history.push("/dashboard");
+        }
         if (nextProps.errorObject) {
             this.setState({errorObject: nextProps.errorObject});
         }
@@ -98,7 +101,8 @@ Login.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    errorObject: state.errorObject
+    errorObject: state.errorObject,
+    security: state.security
 });
 
 export default connect(
