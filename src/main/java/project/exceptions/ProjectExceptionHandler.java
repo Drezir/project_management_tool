@@ -35,7 +35,7 @@ public class ProjectExceptionHandler extends ResponseEntityExceptionHandler {
         return handleMethodArgumentNotValid(ex.getBindingResult());
     }
 
-    private ExceptionResponse generateFromServerException(ServerException ex) {
+    public ExceptionResponse generateFromServerException(ServerException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(ex);
         ex.getServerErrors().forEach(exceptionResponse::addValidationError);
         return exceptionResponse;
