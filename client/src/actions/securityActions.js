@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {SET_CURRENT_USER, GET_ERRORS} from './Types';
-import setJWTToken from '../securityUtils/setJWTToken';
+import setJWTToken from '../utils/setJWTToken';
 import jwt_decode from 'jwt-decode';
 
 export const createNewUser = (newUser, history) => async dispatch => {

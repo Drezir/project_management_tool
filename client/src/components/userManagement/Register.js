@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import {createNewUser} from '../actions/securityActions';
+import {createNewUser} from '../../actions/securityActions';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import classnames from 'classnames';
-
+import FieldError from '../FieldError';
 
 class Register extends Component {
 
@@ -16,7 +16,9 @@ class Register extends Component {
             password: "",
             confirmPassword: "",
 
-            errors: {}
+            errorObject: {
+                errors: {}
+            }
         };
 
         this.onChange = this.onChange.bind(this);
@@ -37,12 +39,12 @@ class Register extends Component {
         this.props.createNewUser(newUser, this.props.history);
     }
     componentWillReceiveProps(nextProps) {
-        this.setState({errors: nextProps.errors});
+        this.setState({errorObject: nextProps.errorObject});
     }
 
     render() {
 
-        const {errors} = this.state;
+        const {errors} = this.state.errorObject;
 
         return (
             <div className="register">
@@ -64,7 +66,7 @@ class Register extends Component {
                                     value={this.state.fullName}
                                     onChange={this.onChange}/>
                                     {errors.fullName && (
-                                        <div className="invalid-feedback">{errors.fullName}</div>
+                                        <div className="invalid-feedback"><FieldError errors={errors.fullName}/></div>
                                     )}
                                 </div>
                                 <div className="form-group">
@@ -79,7 +81,7 @@ class Register extends Component {
                                     value={this.state.username}
                                     onChange={this.onChange}/>
                                     {errors.username && (
-                                        <div className="invalid-feedback">{errors.username}</div>
+                                        <div className="invalid-feedback"><FieldError errors={errors.username}/></div>
                                     )}
                                 </div>
                                 <div className="form-group">
@@ -95,7 +97,7 @@ class Register extends Component {
                                     onChange={this.onChange}
                                     minLength={6}/>
                                     {errors.password && (
-                                        <div className="invalid-feedback">{errors.password}</div>
+                                        <div className="invalid-feedback"><FieldError errors={errors.password}/></div>
                                     )}
                                 </div>
                                 <div className="form-group">
@@ -111,7 +113,7 @@ class Register extends Component {
                                     onChange={this.onChange}
                                     minLength={6}/>
                                     {errors.confirmPassword && (
-                                        <div className="invalid-feedback">{errors.confirmPassword}</div>
+                                        <div className="invalid-feedback"><FieldError errors={errors.confirmPassword}/></div>
                                     )}
                                 </div>
                                 <input type="submit" className="btn btn-info btn-block mt-4" />
@@ -126,11 +128,11 @@ class Register extends Component {
 
 Register.propTypes = {
     createNewUser: PropTypes.func.isRequired,
-    errors: PropTypes.object.isRequired
+    errorObject: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    errors: state.errors
+    errorObject: state.errorObject
 });
 
 export default connect(

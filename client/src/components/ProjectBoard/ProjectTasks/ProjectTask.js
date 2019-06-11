@@ -51,15 +51,10 @@ class ProjectTask extends Component {
 }
 
 ProjectTask.propTypes = {
-    deleteProjectTask: PropTypes.func.isRequired,
-    errors: PropTypes.object.isRequired
+    deleteProjectTask: PropTypes.func.isRequired
 }
 
-const mapStateToProps = state => ({
-    errors: state.errors
-});
-
 export default connect(
-    mapStateToProps,
+    null,
     {deleteProjectTask})
 (ProjectTask);

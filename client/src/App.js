@@ -13,8 +13,8 @@ import ProjectBoard from './components/ProjectBoard/ProjectBoard';
 import AddProjectTask from './components/ProjectBoard/ProjectTasks/AddProjectTask';
 import UpdateProjectTask from './components/ProjectBoard/ProjectTasks/UpdateProjectTask';
 import Landing from './components/layout/Landing';
-import Login from './userManagement/Login';
-import Register from './userManagement/Register';
+import Login from './components/userManagement/Login';
+import Register from './components/userManagement/Register';
 
 function App() {
   return (

@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {getProject, createProject} from '../../actions/projectActions';
 import classnames from 'classnames';
 import ErrorPage from '../ErrorPage';
+import FieldError from '../FieldError';
 
 class UpdateProject extends Component {
 
@@ -18,7 +19,9 @@ class UpdateProject extends Component {
             startDate: "",
             endDate: "",
 
-            errors: {}
+            errorObject: {
+                errors: {}
+            }
         };
 
         this.onChange = this.onChange.bind(this);
@@ -45,9 +48,9 @@ class UpdateProject extends Component {
             endDate: endDate,
         })
 
-        if (nextProps.errors) {
+        if (nextProps.errorObject) {
             this.setState({
-                errors: nextProps.errors
+                errorObject: nextProps.errorObject
             })
         }
     }
@@ -75,9 +78,9 @@ class UpdateProject extends Component {
     }
 
     render() { 
-        const {errors} = this.state;
-        if (errors.errorItems) {
-            return <ErrorPage errors={errors}/>
+        const {errors} = this.state.errorObject;
+        if (this.state.errorObject.stacktrace) {
+            return <ErrorPage errorObject={this.state.errorObject}/>
         }
         return (
             <div className="project">
@@ -98,7 +101,7 @@ class UpdateProject extends Component {
                             value={this.state.projectName}
                             onChange={this.onChange}/>
                             {errors.projectName && (
-                                <div className="invalid-feedback">{errors.projectName}</div>
+                                <div className="invalid-feedback"><FieldError errors={errors.projectName}/></div>
                             )}
                         </div>
                         <div className="form-group">
@@ -113,7 +116,7 @@ class UpdateProject extends Component {
                             onChange={this.onChange}
                             disabled/>
                             {errors.projectIdentifier && (
-                                <div className="invalid-feedback">{errors.projectIdentifier}</div>
+                                <div className="invalid-feedback"><FieldError errors={errors.projectIdentifier}/></div>
                             )}
                         </div>
                         <div className="form-group">
@@ -127,7 +130,7 @@ class UpdateProject extends Component {
                             onChange={this.onChange}>
                             </textarea>
                             {errors.description && (
-                                <div className="invalid-feedback">{errors.description}</div>
+                                <div className="invalid-feedback"><FieldError errors={errors.description}/></div>
                             )}
                         </div>
                         <h6>Start Date</h6>
@@ -163,12 +166,12 @@ UpdateProject.propTypes = {
     getProject: PropTypes.func.isRequired,
     createProject: PropTypes.func.isRequired,
     project: PropTypes.object.isRequired,
-    errors: PropTypes.object.isRequired
+    errorObject: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
     project: state.project.project,
-    errors: state.errors
+    errorObject: state.errorObject
 });
 
 export default connect(

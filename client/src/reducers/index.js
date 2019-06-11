@@ -5,7 +5,7 @@ import backlogReducer from './backlogReducer';
 import securityReducer from './securityReducer';
 
 export default combineReducers({
-    errors: errorReducer,
+    errorObject: errorReducer,
     project: projectReducer,
     backlog: backlogReducer,
     security: securityReducer

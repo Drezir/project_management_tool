@@ -1,20 +1,25 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import {formatError} from '../utils/errorUtil';
 
 export default class ErrorPage extends Component {
     render() {
-        const { errorItems, stacktrace } = this.props.errors;
+        const { errorItems, stacktrace } = this.props.errorObject;
         return (
             <div className="container">
             <p className="display-4">Errors:</p>
                 <ul>
                     {
                         Object.keys(errorItems).map(function (key) {
-                            const error = errorItems[key];
+                            const errors = errorItems[key];
                             return (
                                 <li>
                                     {key}
                                     <ul>
-                                        <li>{error}</li>
+                                        {errors.map(error => {
+                                            return (
+                                                <li>{error.message}: {error.value}</li>
+                                            )
+                                        })}
                                     </ul>
                                 </li>
                             );

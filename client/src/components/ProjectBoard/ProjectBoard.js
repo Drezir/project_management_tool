@@ -11,7 +11,9 @@ class ProjectBoard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            errors: {}
+            errorObject: {
+                errors: {}
+            }
         }
     }
 
@@ -21,9 +23,9 @@ class ProjectBoard extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.errors) {
+        if (nextProps.errorObject) {
             this.setState({
-                errors: nextProps.errors
+                errorObject: nextProps.errorObject
             });
         }
     }
@@ -31,16 +33,16 @@ class ProjectBoard extends Component {
     render() {
         const { id } = this.props.match.params;
         const { projectTasks } = this.props.backlog;
-        const { errors } = this.state;
-        const boardAlgorithm = (errors, projectTasks) => {
-            if (errors.errorItems) {
-                return <ErrorPage errors={errors} />;
+        const errorObject = this.state.errorObject;
+        const boardAlgorithm = (errorObject, projectTasks) => {
+            if (errorObject.stacktrace) {
+                return <ErrorPage errors={errorObject} />;
             } else {
                 return <Backlog projectTasks={projectTasks} />
             }
         };
 
-        let boardContent = boardAlgorithm(errors, projectTasks);
+        let boardContent = boardAlgorithm(errorObject, projectTasks);
 
         return (
             <div className="container">
@@ -57,12 +59,12 @@ class ProjectBoard extends Component {
 ProjectBoard.propTypes = {
     getBacklog: PropTypes.func.isRequired,
     backlog: PropTypes.object.isRequired,
-    errors: PropTypes.object.isRequired
+    errorObject: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
     backlog: state.backlog,
-    errors: state.errors
+    errorObject: state.errorObject
 });
 
 export default connect(

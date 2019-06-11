@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { addProjectTask } from '../../../actions/backlogActions';
 import PropTypes from 'prop-types';
+import FieldError from '../../FieldError';
 
 class AddProjectTask extends Component {
 
@@ -20,7 +21,9 @@ class AddProjectTask extends Component {
             dueDate: "",
             projectIdentifier: id,
 
-            errors: {}
+            errorObject: {
+                errors: {}
+            }
         };
 
         this.onChange = this.onChange.bind(this);
@@ -28,9 +31,9 @@ class AddProjectTask extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.errors) {
+        if (nextProps.errorObject) {
             this.setState({
-                errors: nextProps.errors
+                errorObject: nextProps.errorObject
             })
         }
     }
@@ -59,7 +62,7 @@ class AddProjectTask extends Component {
 
     render() {
         const { id } = this.props.match.params;
-        const { errors } = this.state;
+        const { errors } = this.state.errorObject;
         return (
             <div className="add-PBI">
                 <div className="container">
@@ -82,7 +85,7 @@ class AddProjectTask extends Component {
                                         value={this.state.summary}
                                         onChange={this.onChange} />
                                     {errors.summary && (
-                                        <div className="invalid-feedback">{errors.summary}</div>
+                                        <div className="invalid-feedback"><FieldError errors={errors.summary}/></div>
                                     )}
                                 </div>
                                 <div className="form-group">
@@ -141,11 +144,11 @@ class AddProjectTask extends Component {
 
 AddProjectTask.propTypes = {
     addProjectTask: PropTypes.func.isRequired,
-    errors: PropTypes.object.isRequired
+    errorObject: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
-    errors: state.errors
+    errorObject: state.errorObject
 });
 
 export default connect(

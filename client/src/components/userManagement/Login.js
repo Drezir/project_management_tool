@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {login} from '../actions/securityActions';
+import {login} from '../../actions/securityActions';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import classnames from 'classnames';
+import FieldError from '../FieldError';
 
 class Login extends Component {
 
@@ -14,7 +15,9 @@ class Login extends Component {
             username: "",
             password: "",
 
-            errors: {}
+            errorObject: {
+                errors: {}
+            }
         };
 
         this.onChange = this.onChange.bind(this);
@@ -33,17 +36,13 @@ class Login extends Component {
         this.props.login(loginRequest);
     }
     componentWillReceiveProps(nextProps) {
-        this.setState({errors: nextProps.errors});
+        if (nextProps.errorObject) {
+            this.setState({errorObject: nextProps.errorObject});
+        }
     }
 
     render() {
-
-        const {errors} = this.state;
-        const errorItemsUsername = errors.errorItems 
-                                    && errors.errorItems 
-                                    && errors.errorItems.userDoesNotExist 
-                                    && errors.errorItems.userDoesNotExist.username;
-
+        const {errors} = this.state.errorObject;
         return (
             <div className="login">
                 <div className="container">
@@ -56,17 +55,14 @@ class Login extends Component {
                                     type="email" 
                                     className={classnames({
                                         "form-control form-control-lg": true,
-                                        "is-invalid": errors.username || errorItemsUsername,
+                                        "is-invalid": errors.username,
                                     })}
                                     value={this.state.username}
                                     onChange={this.onChange}
                                     placeholder="Email Address" 
                                     name="username" />
                                     {errors.username && (
-                                        <div className="invalid-feedback">{errors.username}</div>
-                                    )}
-                                    {errorItemsUsername && (
-                                        <div className="invalid-feedback">{errors.errorItems.userDoesNotExist.username.message}</div>
+                                        <div className="invalid-feedback"><FieldError errors={errors.username}/></div>
                                     )}
 
                                 </div>
@@ -82,7 +78,7 @@ class Login extends Component {
                                     placeholder="Password" 
                                     name="password" />
                                     {errors.password && (
-                                        <div className="invalid-feedback">{errors.password}</div>
+                                        <div className="invalid-feedback"><FieldError errors={errors.password}/></div>
                                     )}
                                 </div>
                                 <input type="submit" className="btn btn-info btn-block mt-4" />
@@ -98,11 +94,11 @@ class Login extends Component {
 
 Login.propTypes = {
     login: PropTypes.func.isRequired,
-    errors: PropTypes.object.isRequired
+    errorObject: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    errors: state.errors
+    errorObject: state.errorObject
 });
 
 export default connect(
