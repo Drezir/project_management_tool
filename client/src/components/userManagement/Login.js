@@ -35,6 +35,11 @@ class Login extends Component {
         };
         this.props.login(loginRequest);
     }
+    componentDidMount() {
+        if (this.props.security.validToken) {
+            this.props.history.push("/dashboard");
+        }
+    }
     componentWillReceiveProps(nextProps) {
         if (nextProps.security && nextProps.security.validToken) {
             this.props.history.push("/dashboard");
@@ -97,7 +102,8 @@ class Login extends Component {
 
 Login.propTypes = {
     login: PropTypes.func.isRequired,
-    errorObject: PropTypes.object.isRequired
+    errorObject: PropTypes.object.isRequired,
+    security: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({

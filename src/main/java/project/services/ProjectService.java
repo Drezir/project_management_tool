@@ -43,8 +43,8 @@ public class ProjectService {
             return projectRepository.save(project);
         } catch (Exception ex) {
             throw new ServerException("Cannot save or update project", ex)
-                .withError(ServerError.PROJECT_CANNOT_PERSIST, "id", project.getId())
-                .withError(ServerError.PROJECT_CANNOT_PERSIST, "projectIdentifier", project.getProjectIdentifier());
+                .withError(ServerError.PROJECT_CANNOT_PERSIST("Project already exists"), "id", project.getId())
+                .withError(ServerError.PROJECT_CANNOT_PERSIST("Project already exists"), "projectIdentifier", project.getProjectIdentifier());
         }
     }
 
